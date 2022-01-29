@@ -6,14 +6,16 @@ import com.loki.caninebookmongo.data.repository.UserRepository;
 import com.loki.caninebookmongo.service.UserRegistrationService;
 import com.loki.caninebookmongo.web.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
-@Controller
+@RequestMapping
 @RestController
 public class UserController {
 
@@ -24,7 +26,7 @@ public class UserController {
     }
 
     @PostMapping("/register-user")
-    public User addUser(@RequestBody @Valid UserDTO userDTO) {
-        return userRegistrationService.registerUser(userDTO);
+    public ResponseEntity<User> addUser(@RequestBody @Valid UserDTO userDTO) {
+        return ResponseEntity.ok(userRegistrationService.registerUser(userDTO));
     }
 }

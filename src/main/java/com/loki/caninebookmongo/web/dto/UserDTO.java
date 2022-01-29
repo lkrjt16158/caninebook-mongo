@@ -26,7 +26,7 @@ public class UserDTO {
     @NotEmpty(message = "Password should not be null or empty")
     String password;
 
-    @Email
+    @Email(message = "Invalid email")
     String email;
 
     @PhoneNumberValidator
