@@ -9,6 +9,7 @@ import com.loki.caninebookmongo.service.UserService;
 import com.loki.caninebookmongo.service.exceptions.UserAlreadyExistsException;
 import com.loki.caninebookmongo.web.dto.UserDTO;
 import com.loki.caninebookmongo.web.error.FormMustContainPhoneOrEmailException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,10 +18,12 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
     private final UserRepository userRepository;
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserRegistrationServiceImpl(UserRepository userRepository, UserService userService) {
+    public UserRegistrationServiceImpl(UserRepository userRepository, UserService userService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -48,7 +51,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
         user.setLastName(userDTO.getLastName());
         user.setPhoneNumber(userDTO.getPhoneNumber());
         user.setEmail(userDTO.getEmail());
-        user.setPassword(userDTO.getPassword());
+        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
 
         user = userRepository.save(user);
         return user;

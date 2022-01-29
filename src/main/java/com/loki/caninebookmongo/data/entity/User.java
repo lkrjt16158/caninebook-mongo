@@ -1,6 +1,7 @@
 package com.loki.caninebookmongo.data.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.loki.caninebookmongo.data.entity.validation.PhoneNumberValidator;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,6 +28,7 @@ public class User {
 
     String userName;
 
+    @JsonIgnore
     String password;
 
     String email;

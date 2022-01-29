@@ -2,24 +2,22 @@ package com.loki.caninebookmongo.service.impl;
 
 import com.loki.caninebookmongo.data.entity.User;
 import com.loki.caninebookmongo.data.repository.UserRepository;
+import com.loki.caninebookmongo.security.config.PasswordConfig;
 import com.loki.caninebookmongo.service.UserRegistrationService;
 import com.loki.caninebookmongo.service.UserService;
 import com.loki.caninebookmongo.service.exceptions.UserAlreadyExistsException;
 import com.loki.caninebookmongo.web.dto.UserDTO;
 import com.loki.caninebookmongo.web.error.FormMustContainPhoneOrEmailException;
 import org.assertj.core.api.Assertions;
-import org.hamcrest.Matchers;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
-import org.mockito.internal.matchers.Any;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.BeanUtils;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
 public class UserRegistrationServiceImplTest {
@@ -30,14 +28,17 @@ public class UserRegistrationServiceImplTest {
     @Mock
     public UserRepository userRepository;
 
+
     @Captor
     ArgumentCaptor<User> userArgumentCaptor;
 
     UserRegistrationService userRegistrationService;
 
+    PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+
     @BeforeEach
     public void setUp() {
-        userRegistrationService = new UserRegistrationServiceImpl(userRepository, userService);
+        userRegistrationService = new UserRegistrationServiceImpl(userRepository, userService, passwordEncoder);
     }
 
     @Test
@@ -49,7 +50,6 @@ public class UserRegistrationServiceImplTest {
                 null,
                 null);
 
-        UserRegistrationService userRegistrationService = new UserRegistrationServiceImpl(userRepository, userService);
 
         //When both email and phone are null
         Assertions.assertThatThrownBy(() -> userRegistrationService.registerUser(userDTO1))
@@ -180,7 +180,7 @@ public class UserRegistrationServiceImplTest {
 
         Assertions.assertThat(insertedUser)
                 .usingRecursiveComparison()
-                .comparingOnlyFields("firstName", "lastName", "userName", "password", "email", "phoneNumber")
+                .comparingOnlyFields("firstName", "lastName", "userName", "email", "phoneNumber")
                 .isEqualTo(expectedUser);
 
     }

@@ -1,22 +1,16 @@
 package com.loki.caninebookmongo.web.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.loki.caninebookmongo.data.entity.User;
 import com.loki.caninebookmongo.data.repository.UserRepository;
-import com.loki.caninebookmongo.service.UserRegistrationService;
-import com.loki.caninebookmongo.service.UserService;
 import com.loki.caninebookmongo.web.dto.UserDTO;
-import com.loki.caninebookmongo.web.dto.ValidationFailedResponseDTO;
+import com.loki.caninebookmongo.web.dto.ValidationFailedResponse;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -98,8 +92,8 @@ class UserControllerTest {
         Map<String, String > errors = new HashMap<>();
         errors.put("userName", "UserName should not be null or empty");
         errors.put("firstName", "First name should not be null or empty");
-        ValidationFailedResponseDTO validationFailedResponseDTO = new ValidationFailedResponseDTO(errors);
-        String expectedResponse = objectMapper.writeValueAsString(validationFailedResponseDTO);
+        ValidationFailedResponse validationFailedResponse = new ValidationFailedResponse(errors);
+        String expectedResponse = objectMapper.writeValueAsString(validationFailedResponse);
 
         Assertions.assertThat(response).isEqualTo(expectedResponse);
 
@@ -128,8 +122,8 @@ class UserControllerTest {
 
         Map<String, String > errors = new HashMap<>();
         errors.put("phoneNumber", "Invalid phone number");
-        ValidationFailedResponseDTO validationFailedResponseDTO = new ValidationFailedResponseDTO(errors);
-        String expectedResponse = objectMapper.writeValueAsString(validationFailedResponseDTO);
+        ValidationFailedResponse validationFailedResponse = new ValidationFailedResponse(errors);
+        String expectedResponse = objectMapper.writeValueAsString(validationFailedResponse);
 
         Assertions.assertThat(response).isEqualTo(expectedResponse);
     }
@@ -157,8 +151,8 @@ class UserControllerTest {
 
         Map<String, String > errors = new HashMap<>();
         errors.put("email", "Invalid email");
-        ValidationFailedResponseDTO validationFailedResponseDTO = new ValidationFailedResponseDTO(errors);
-        String expectedResponse = objectMapper.writeValueAsString(validationFailedResponseDTO);
+        ValidationFailedResponse validationFailedResponse = new ValidationFailedResponse(errors);
+        String expectedResponse = objectMapper.writeValueAsString(validationFailedResponse);
         Assertions.assertThat(response).isEqualTo(expectedResponse);
     }
 
@@ -186,8 +180,8 @@ class UserControllerTest {
         Map<String, String > errors = new HashMap<>();
         errors.put("email", "Phone or email required");
         errors.put("phoneNumber", "Phone or email required");
-        ValidationFailedResponseDTO validationFailedResponseDTO = new ValidationFailedResponseDTO(errors);
-        String expectedResponse = objectMapper.writeValueAsString(validationFailedResponseDTO);
+        ValidationFailedResponse validationFailedResponse = new ValidationFailedResponse(errors);
+        String expectedResponse = objectMapper.writeValueAsString(validationFailedResponse);
         Assertions.assertThat(response).isEqualTo(expectedResponse);
     }
 
@@ -224,8 +218,8 @@ class UserControllerTest {
 
         Map<String, String > errors = new HashMap<>();
         errors.put("userName", "user already exists with username: test");
-        ValidationFailedResponseDTO validationFailedResponseDTO = new ValidationFailedResponseDTO(errors);
-        String expectedResponse = objectMapper.writeValueAsString(validationFailedResponseDTO);
+        ValidationFailedResponse validationFailedResponse = new ValidationFailedResponse(errors);
+        String expectedResponse = objectMapper.writeValueAsString(validationFailedResponse);
         Assertions.assertThat(response).isEqualTo(expectedResponse);
     }
 }

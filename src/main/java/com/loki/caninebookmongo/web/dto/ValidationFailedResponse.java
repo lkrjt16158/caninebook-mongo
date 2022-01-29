@@ -9,7 +9,7 @@ import java.util.Map;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ValidationFailedResponseDTO {
+public class ValidationFailedResponse {
     Map<String, String> errors;
 
 }

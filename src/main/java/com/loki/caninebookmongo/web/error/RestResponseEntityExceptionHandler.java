@@ -1,9 +1,8 @@
 package com.loki.caninebookmongo.web.error;
 
+import com.loki.caninebookmongo.security.AuthenticationFailureException;
 import com.loki.caninebookmongo.service.exceptions.UserAlreadyExistsException;
-import com.loki.caninebookmongo.web.dto.ValidationFailedResponseDTO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
+import com.loki.caninebookmongo.web.dto.ValidationFailedResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,11 +26,8 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     // API
 
-    @Autowired
-    private MessageSource messages;
-
     @Override
-    protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleBindException( BindException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         return handleExceptionInternal(ex, generateErrorResponseForValidationFail(ex), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
@@ -41,39 +37,52 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return handleExceptionInternal(ex, generateErrorResponseForValidationFail(ex), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
-
-    private static ValidationFailedResponseDTO generateErrorResponseForValidationFail(BindException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            System.out.println(errorMessage);
-            errors.put(fieldName, errorMessage);
-        });
-
-        ValidationFailedResponseDTO validationFailedResponseDTO = new ValidationFailedResponseDTO();
-        validationFailedResponseDTO.setErrors(errors);
-        return validationFailedResponseDTO;
-    }
-
     // 400
     @ExceptionHandler({ FormMustContainPhoneOrEmailException.class })
     public ResponseEntity<Object> handlePhoneNumOrEmailMissing(final RuntimeException ex, final WebRequest request) {
         Map<String, String> errors = new HashMap<>();
         errors.put("phoneNumber",ex.getMessage());
         errors.put("email",ex.getMessage());
-        ValidationFailedResponseDTO validationFailedResponseDTO = new ValidationFailedResponseDTO();
-        validationFailedResponseDTO.setErrors(errors);
-        return handleExceptionInternal(ex, validationFailedResponseDTO, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+        ValidationFailedResponse validationFailedResponse = new ValidationFailedResponse();
+        validationFailedResponse.setErrors(errors);
+        return handleExceptionInternal(ex, validationFailedResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
+    //409
     @ExceptionHandler({ UserAlreadyExistsException.class })
     public ResponseEntity<Object> handleAlreadyExistsUserName(final UserAlreadyExistsException ex, final WebRequest request) {
         Map<String, String> errors = new HashMap<>();
         errors.put(ex.getField(),ex.getMessage());
-        ValidationFailedResponseDTO validationFailedResponseDTO = new ValidationFailedResponseDTO();
-        validationFailedResponseDTO.setErrors(errors);
-        return handleExceptionInternal(ex, validationFailedResponseDTO, new HttpHeaders(), HttpStatus.CONFLICT, request);
+        ValidationFailedResponse validationFailedResponse = new ValidationFailedResponse();
+        validationFailedResponse.setErrors(errors);
+        return handleExceptionInternal(ex, validationFailedResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
+    }
+
+
+    //403
+    @ExceptionHandler({ AuthenticationFailureException.class })
+    public ResponseEntity<Object> handleAlreadyExistsUserName(final AuthenticationFailureException ex, final WebRequest request) {
+        Map<String, String > errors = new HashMap<>();
+        errors.put("authentication", ex.getMessage());
+        // return new ResponseEntity<>(authenticationResultResponseDTO,new HttpHeaders(), HttpStatus.UNAUTHORIZED);
+        return handleExceptionInternal(ex, new ValidationFailedResponse(errors), new HttpHeaders(), HttpStatus.FORBIDDEN, request);
+    }
+
+
+    private static ValidationFailedResponse generateErrorResponseForValidationFail(BindException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            System.out.println(errorMessage);
+            errors.put(fieldName, errorMessage);
+
+        });
+
+        ValidationFailedResponse validationFailedResponse = new ValidationFailedResponse();
+        validationFailedResponse.setErrors(errors);
+        return validationFailedResponse;
     }
 
 
