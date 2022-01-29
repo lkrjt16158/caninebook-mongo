@@ -24,6 +24,8 @@ import java.util.Map;
 @SpringBootTest
 class UserControllerTest {
 
+    private static String REGISTRATION_URI = "/api/register-user";
+
     @Autowired
     MockMvc mockMvc;
 
@@ -42,7 +44,7 @@ class UserControllerTest {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/register-user")
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(REGISTRATION_URI)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userDTO1))
                         .accept(MediaType.APPLICATION_JSON))
@@ -66,6 +68,8 @@ class UserControllerTest {
                 .ignoringFields("userId")
                 .isEqualTo(user);
 
+        userRepository.deleteByUserName("test");
+
     }
 
     @Test
@@ -79,7 +83,7 @@ class UserControllerTest {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/register-user")
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(REGISTRATION_URI)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userDTO1))
                         .accept(MediaType.APPLICATION_JSON))
@@ -110,7 +114,7 @@ class UserControllerTest {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/register-user")
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(REGISTRATION_URI)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userDTO1))
                         .accept(MediaType.APPLICATION_JSON))
@@ -139,7 +143,7 @@ class UserControllerTest {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/register-user")
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(REGISTRATION_URI)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userDTO1))
                         .accept(MediaType.APPLICATION_JSON))
@@ -167,7 +171,7 @@ class UserControllerTest {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/register-user")
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(REGISTRATION_URI)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userDTO1))
                         .accept(MediaType.APPLICATION_JSON))
@@ -196,9 +200,8 @@ class UserControllerTest {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
-        userRepository.deleteAll();
         //add user
-        mockMvc.perform(MockMvcRequestBuilders.post("/register-user")
+        mockMvc.perform(MockMvcRequestBuilders.post(REGISTRATION_URI)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userDTO1))
                         .accept(MediaType.APPLICATION_JSON))
@@ -206,7 +209,7 @@ class UserControllerTest {
                 .andReturn();
 
         MvcResult mvcResult = mockMvc
-                .perform(MockMvcRequestBuilders.post("/register-user")
+                .perform(MockMvcRequestBuilders.post(REGISTRATION_URI)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userDTO1))
                         .accept(MediaType.APPLICATION_JSON))
@@ -221,5 +224,7 @@ class UserControllerTest {
         ValidationFailedResponse validationFailedResponse = new ValidationFailedResponse(errors);
         String expectedResponse = objectMapper.writeValueAsString(validationFailedResponse);
         Assertions.assertThat(response).isEqualTo(expectedResponse);
+
+        userRepository.deleteByUserName("test");
     }
 }

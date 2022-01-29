@@ -36,10 +36,12 @@ public class UserIAMController {
 
     @PostMapping("/login")
     public ResponseEntity<UserAuthenticationSuccessfulResponse> UserLogin(@RequestBody @Valid UserNameAndPasswordAuthenticationRequestDTO userNameAndPasswordAuthenticationRequest) {
+
         Authentication authenticationRequest = new UsernamePasswordAuthenticationToken(
                 userNameAndPasswordAuthenticationRequest.getUsername(),
                 userNameAndPasswordAuthenticationRequest.getPassword()
         );
+
         boolean authFailure = true;
         Authentication authentication = null;
         try {
