@@ -1,6 +1,7 @@
 package com.loki.caninebookmongo.web.error;
 
 import com.loki.caninebookmongo.security.AuthenticationFailureException;
+import com.loki.caninebookmongo.service.exceptions.PetAlreadyExistsException;
 import com.loki.caninebookmongo.service.exceptions.UserAlreadyExistsException;
 import com.loki.caninebookmongo.web.dto.ValidationFailedResponse;
 import org.springframework.http.HttpHeaders;
@@ -53,6 +54,18 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     public ResponseEntity<Object> handleAlreadyExistsUserName(final UserAlreadyExistsException ex, final WebRequest request) {
         Map<String, String> errors = new HashMap<>();
         errors.put(ex.getField(),ex.getMessage());
+        ValidationFailedResponse validationFailedResponse = new ValidationFailedResponse();
+        validationFailedResponse.setErrors(errors);
+        return handleExceptionInternal(ex, validationFailedResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
+    }
+
+    //409
+    @ExceptionHandler({ PetAlreadyExistsException.class })
+    public ResponseEntity<Object> handlePetAlreadyExistsException(final PetAlreadyExistsException ex, final WebRequest request) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("petName", ex.getPetName());
+        errors.put("breed", ex.getBreed());
+        errors.put("message", ex.getMessage());
         ValidationFailedResponse validationFailedResponse = new ValidationFailedResponse();
         validationFailedResponse.setErrors(errors);
         return handleExceptionInternal(ex, validationFailedResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
